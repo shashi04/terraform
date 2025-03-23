@@ -1,7 +1,6 @@
 variable "region" {
   description = "Define the Region"
   type        = string
-  default     = "ap-south-1"
 }
 
 variable "name" {
