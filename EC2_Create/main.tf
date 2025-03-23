@@ -56,7 +56,8 @@ module "web_server" {
   private_key   = tls_private_key.sshkey.private_key_pem
 }
 
-module "s3"
+module "s3" {
   source            = "../terraform-modules/s3-module"
   bucket_name       = "guviterraforbucket"
   block_public_acls = false
+}
