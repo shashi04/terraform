@@ -24,6 +24,8 @@ provider "aws" {
 
 # ✅ Step 1: Generate an SSH Key Pair
 
+# Generates Public Key & Private Key
+
 resource "tls_private_key" "sshkey" {
   algorithm = "RSA"
   rsa_bits  = 4096
@@ -39,17 +41,22 @@ resource "local_file" "private_key" {
 # ✅ Step 3: Create an AWS Key Pair using the Generated SSH Key
 
 resource "aws_key_pair" "generated" {
-  key_name   = "terraform-key-${terraform.workspace}"
+  key_name   = "terraform-key-${terraform.workspace}"  #terraform-key-test
   public_key = tls_private_key.sshkey.public_key_openssh
 }
 
 # ✅ Step 4: Create an EC2 Instance with the Generated Key
 
 module "web_server" {
-  source        = "../terraform-modules/ec2-instance"
-  instance_name = "MyWebServer-${terraform.workspace}"
-  instance_type = "t2.micro"
+  source        = "../terraform-modules/ec2-module"
+  instance_name = "MyWebServer-${terraform.workspace}" #MyWebServer-test
+  instance_type = "t2.medium"
   ami_id        = "ami-00bb6a80f01f03502"
   key_name      = aws_key_pair.generated.key_name
   private_key   = tls_private_key.sshkey.private_key_pem
 }
+
+module "s3"
+  source            = "../terraform-modules/s3-module"
+  bucket_name       = "guviterraforbucket"
+  block_public_acls = false
